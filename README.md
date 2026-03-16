@@ -1,10 +1,31 @@
-# POS-Restaurante-
+# 🍴 POS-Restaurante: Sistema de Gestión Gastronómica
 
-POS-Restaurante  
-Este es un proyecto de Ingeniería de Software enfocado en crear un sistema de punto de venta (PoS) para la gestión de un restaurante.
+Este proyecto consiste en el diseño e implementación de un sistema de **Punto de Venta (PoS)** robusto, desarrollado bajo principios de ingeniería de software para optimizar la operatividad de negocios de comida y restaurantes.
 
-![Captura 1](imagenes/captura1.png)
+## 🎯 Objetivo del Proyecto
+Desarrollar una herramienta integral que facilite el control de las transacciones comerciales, la gestión de comandas y el monitoreo de inventarios en tiempo real, mejorando la experiencia tanto del personal como del cliente final.
 
-![Captura 2](imagenes/captura2.png)
+## 🚀 Funcionalidades Principales
+* **Gestión de Pedidos:** Registro rápido de comandas asignadas por mesa.
+* **Control de Menú Dinámico:** Administración de categorías, platillos y precios.
+* **Módulo de Ventas:** Generación de reportes diarios y facturación simplificada.
+* **Gestión de Usuarios:** Roles diferenciados para administradores, meseros y cajeros.
 
-![Captura 3](imagenes/captura3.png)
+## 🛠️ Stack Tecnológico
+El sistema está construido con una arquitectura moderna para garantizar escalabilidad:
+* **Frontend:** HTML5, CSS3 y JavaScript (ES6+).
+* **Backend:** Node.js con el framework Express.
+* **Base de Datos:** MariaDB/MySQL para la persistencia de datos relacionales.
+* **Entorno:** Despliegue optimizado en entornos Linux (Ubuntu Server).
+
+## 📸 Evidencia del Sistema
+![Captura del Dashboard](imagenes/captura1.png)
+*Interfaz principal de gestión.*
+
+![Gestión de Menú](imagenes/captura2.png)
+*Módulo de administración de productos.*
+
+![Reporte de Ventas](imagenes/captura3.png)
+*Visualización de estados y cierres de caja.*
+
+---
