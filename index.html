@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>POS Restaurante (Básico)</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand__title">POS Restaurante</div>
+        <div class="brand__subtitle">Pedidos rápidos • Guardado local</div>
+      </div>
+      <div class="topbar__actions">
+        <button id="btnNew" class="btn btn--ghost" type="button">Nuevo pedido</button>
+        <button id="btnSave" class="btn btn--primary" type="button">Guardar pedido</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="panel">
+        <div class="panel__header">
+          <h2>Menú</h2>
+          <div class="searchRow">
+            <input id="menuSearch" class="input" placeholder="Buscar…" autocomplete="off" />
+          </div>
+        </div>
+
+        <div class="tabs" role="tablist" aria-label="Categorías">
+          <button class="tab tab--active" data-cat="all" type="button" role="tab" aria-selected="true">Todo</button>
+          <button class="tab" data-cat="comida" type="button" role="tab">Comida</button>
+          <button class="tab" data-cat="bebida" type="button" role="tab">Bebidas</button>
+          <button class="tab" data-cat="postre" type="button" role="tab">Postres</button>
+        </div>
+
+        <div id="menuGrid" class="menuGrid" aria-label="Productos"></div>
+
+        <div class="panel__divider"></div>
+
+        <details class="customItem">
+          <summary>Agregar ítem manual</summary>
+          <div class="customItem__form">
+            <input id="customName" class="input" placeholder="Nombre (ej. Milanesa)" />
+            <input id="customPrice" class="input" placeholder="Precio" inputmode="decimal" />
+            <button id="btnAddCustom" class="btn btn--secondary" type="button">Agregar</button>
+          </div>
+        </details>
+      </section>
+
+      <section class="panel panel--order">
+        <div class="panel__header">
+          <h2>Pedido</h2>
+          <div class="badgeRow">
+            <span id="orderStatus" class="badge badge--open">Abierto</span>
+            <span id="orderId" class="muted"></span>
+          </div>
+        </div>
+
+        <div class="orderMeta">
+          <label class="field">
+            <span>Mesa</span>
+            <input id="mesa" class="input" placeholder="Ej. 5" />
+          </label>
+          <label class="field">
+            <span>Cliente (opcional)</span>
+            <input id="cliente" class="input" placeholder="Nombre" />
+          </label>
+          <label class="field field--full">
+            <span>Notas</span>
+            <input id="notas" class="input" placeholder="Sin cebolla, etc." />
+          </label>
+        </div>
+
+        <div class="orderListHeader">
+          <div>Ítem</div>
+          <div class="right">Cant.</div>
+          <div class="right">Precio</div>
+          <div class="right">Subtotal</div>
+          <div></div>
+        </div>
+        <div id="orderList" class="orderList" aria-label="Items del pedido"></div>
+
+        <div class="totals">
+          <div class="totals__row">
+            <span class="muted">Items</span>
+            <span id="itemsCount">0</span>
+          </div>
+          <div class="totals__row totals__row--big">
+            <span>Total</span>
+            <span id="totalAmount">$0</span>
+          </div>
+        </div>
+
+        <div class="orderActions">
+          <button id="btnPay" class="btn btn--primary" type="button">Marcar como pagado</button>
+          <button id="btnCancel" class="btn btn--danger" type="button">Cancelar</button>
+        </div>
+      </section>
+
+      <section class="panel panel--saved">
+        <div class="panel__header">
+          <h2>Pedidos guardados</h2>
+          <div class="savedActions">
+            <button id="btnClearAll" class="btn btn--ghost" type="button">Borrar todos</button>
+          </div>
+        </div>
+
+        <div class="savedFilters">
+          <select id="filterStatus" class="input">
+            <option value="all">Todos</option>
+            <option value="open">Abiertos</option>
+            <option value="paid">Pagados</option>
+            <option value="cancelled">Cancelados</option>
+          </select>
+          <input id="savedSearch" class="input" placeholder="Buscar por mesa/cliente…" />
+        </div>
+
+        <div id="savedList" class="savedList" aria-label="Lista de pedidos"></div>
+      </section>
+    </main>
+
+    <dialog id="dialog">
+      <form method="dialog" class="dialog">
+        <div class="dialog__title" id="dialogTitle">Mensaje</div>
+        <div class="dialog__body" id="dialogBody"></div>
+        <div class="dialog__actions">
+          <button class="btn btn--primary" value="ok">OK</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
