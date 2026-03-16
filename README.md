@@ -19,7 +19,7 @@ El sistema está construido con una arquitectura moderna para garantizar escalab
 * **Entorno:** Despliegue optimizado en entornos Linux (Ubuntu Server).
 
 ## 📸 Evidencia del Sistema
-![Captura del Dashboard](imagenes/captura1.png)
+![Captura del Dashboard](https://github.com/lina-99/POS-Restaurante-/blob/main/Imagenes/captura1.png)
 *Interfaz principal de gestión.*
 
 ![Gestión de Menú](imagenes/captura2.png)
