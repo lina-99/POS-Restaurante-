@@ -25,7 +25,7 @@ El sistema está construido con una arquitectura moderna para garantizar escalab
 ![Gestión de Menú]([imagenes/captura2.png](https://github.com/lina-99/POS-Restaurante-/blob/main/Imagenes/captura2.png))
 *Módulo de administración de productos.*
 
-![Reporte de Ventas](imagenes/captura3.png)
+![Reporte de Ventas]([imagenes/captura3.png](https://github.com/lina-99/POS-Restaurante-/blob/main/Imagenes/captura3.png))
 *Visualización de estados y cierres de caja.*
 
 ---
