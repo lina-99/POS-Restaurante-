@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>POS Restaurante (Básico)</title>
+    <title>POS Restaurante Pro</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
@@ -19,6 +19,21 @@
     </header>
 
     <main class="layout">
+      <section class="dashboardCards">
+        <article class="kpiCard">
+          <span class="kpiCard__label">Pedidos guardados</span>
+          <span id="kpiOrders" class="kpiCard__value">0</span>
+        </article>
+        <article class="kpiCard">
+          <span class="kpiCard__label">Recetas activas</span>
+          <span id="kpiRecipes" class="kpiCard__value">0</span>
+        </article>
+        <article class="kpiCard">
+          <span class="kpiCard__label">Ventas pagadas</span>
+          <span id="kpiPaid" class="kpiCard__value">$0</span>
+        </article>
+      </section>
+
       <section class="panel">
         <div class="panel__header">
           <h2>Menú</h2>
@@ -38,14 +53,24 @@
 
         <div class="panel__divider"></div>
 
-        <details class="customItem">
-          <summary>Agregar ítem manual</summary>
-          <div class="customItem__form">
-            <input id="customName" class="input" placeholder="Nombre (ej. Milanesa)" />
-            <input id="customPrice" class="input" placeholder="Precio" inputmode="decimal" />
-            <button id="btnAddCustom" class="btn btn--secondary" type="button">Agregar</button>
+        <div class="recipesBox">
+          <h3>Inventario de recetas</h3>
+          <p class="muted">Administrá productos para el menú: agregar, modificar y eliminar.</p>
+          <div class="recipesForm">
+            <input id="recipeName" class="input" placeholder="Nombre de receta" />
+            <input id="recipePrice" class="input" placeholder="Precio" inputmode="decimal" />
+            <select id="recipeCat" class="input">
+              <option value="comida">Comida</option>
+              <option value="bebida">Bebida</option>
+              <option value="postre">Postre</option>
+            </select>
+            <div class="recipesForm__actions">
+              <button id="btnRecipeSave" class="btn btn--secondary" type="button">Guardar receta</button>
+              <button id="btnRecipeCancel" class="btn btn--ghost" type="button">Cancelar edición</button>
+            </div>
           </div>
-        </details>
+          <div id="recipesList" class="recipesList" aria-label="Inventario de recetas"></div>
+        </div>
       </section>
 
       <section class="panel panel--order">

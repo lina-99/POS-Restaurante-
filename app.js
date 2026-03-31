@@ -1,6 +1,7 @@
 /* global localStorage */
 
 const STORAGE_KEY = "pos_restaurante_pedidos_v1";
+const RECIPES_KEY = "pos_restaurante_recetas_v1";
 const moneyFmt = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS" });
 
 function $(sel) {
@@ -76,7 +77,14 @@ function showDialog(title, body) {
   else alert(`${title}\n\n${body}`);
 }
 
-const MENU = [
+function categoryLabel(cat) {
+  if (cat === "comida") return "Comida";
+  if (cat === "bebida") return "Bebida";
+  if (cat === "postre") return "Postre";
+  return "Otro";
+}
+
+const DEFAULT_RECIPES = [
   { id: "c1", name: "Sashimi mixto", price: 9500, cat: "comida" },
   { id: "c2", name: "Roll Philadelphia (8 piezas)", price: 8200, cat: "comida" },
   { id: "c3", name: "Roll Buenos Aires (8 piezas)", price: 8400, cat: "comida" },
@@ -89,8 +97,26 @@ const MENU = [
   { id: "p2", name: "Mochi (2 unidades)", price: 4200, cat: "postre" },
 ];
 
+function loadRecipes() {
+  try {
+    const raw = localStorage.getItem(RECIPES_KEY);
+    if (!raw) return structuredClone(DEFAULT_RECIPES);
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed) || parsed.length === 0) return structuredClone(DEFAULT_RECIPES);
+    return parsed;
+  } catch {
+    return structuredClone(DEFAULT_RECIPES);
+  }
+}
+
+function saveRecipes(recipes) {
+  localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes));
+}
+
 let activeCat = "all";
 let menuQuery = "";
+let recipes = loadRecipes();
+let recipeEditingId = null;
 
 let currentOrder = {
   id: uid(),
@@ -226,6 +252,7 @@ function deleteOrder(orderId) {
 function clearAllOrders() {
   saveOrders([]);
   renderSaved();
+  renderKPIs();
   showDialog("Listo", "Se borraron todos los pedidos guardados.");
 }
 
@@ -234,7 +261,8 @@ function renderMenu() {
   grid.innerHTML = "";
 
   const q = menuQuery.toLowerCase();
-  const filtered = MENU.filter((p) => (activeCat === "all" ? true : p.cat === activeCat))
+  const filtered = recipes
+    .filter((p) => (activeCat === "all" ? true : p.cat === activeCat))
     .filter((p) => (q ? p.name.toLowerCase().includes(q) : true));
 
   if (filtered.length === 0) {
@@ -258,7 +286,7 @@ function renderMenu() {
     name.textContent = p.name;
     const meta = document.createElement("div");
     meta.className = "menuItem__meta";
-    meta.textContent = p.cat;
+    meta.textContent = categoryLabel(p.cat);
     left.appendChild(name);
     left.appendChild(meta);
 
@@ -270,6 +298,113 @@ function renderMenu() {
     card.appendChild(price);
     grid.appendChild(card);
   }
+}
+
+function resetRecipeForm() {
+  recipeEditingId = null;
+  $("#recipeName").value = "";
+  $("#recipePrice").value = "";
+  $("#recipeCat").value = "comida";
+}
+
+function saveRecipeFromForm() {
+  const name = safeText($("#recipeName").value);
+  const price = parsePrice($("#recipePrice").value);
+  const cat = $("#recipeCat").value;
+  if (!name) {
+    showDialog("Falta info", "Ingresá el nombre de la receta.");
+    return;
+  }
+  if (price == null || price <= 0) {
+    showDialog("Falta info", "Ingresá un precio válido para la receta.");
+    return;
+  }
+  if (!["comida", "bebida", "postre"].includes(cat)) {
+    showDialog("Falta info", "Seleccioná una categoría válida.");
+    return;
+  }
+
+  if (recipeEditingId) {
+    recipes = recipes.map((r) => (r.id === recipeEditingId ? { ...r, name, price, cat } : r));
+  } else {
+    recipes.unshift({ id: uid(), name, price, cat });
+  }
+
+  saveRecipes(recipes);
+  resetRecipeForm();
+  renderRecipes();
+  renderMenu();
+  renderKPIs();
+}
+
+function editRecipe(recipeId) {
+  const found = recipes.find((r) => r.id === recipeId);
+  if (!found) return;
+  recipeEditingId = recipeId;
+  $("#recipeName").value = found.name;
+  $("#recipePrice").value = String(found.price);
+  $("#recipeCat").value = found.cat;
+}
+
+function deleteRecipe(recipeId) {
+  recipes = recipes.filter((r) => r.id !== recipeId);
+  saveRecipes(recipes);
+  if (recipeEditingId === recipeId) resetRecipeForm();
+  renderRecipes();
+  renderMenu();
+  renderKPIs();
+}
+
+function renderRecipes() {
+  const list = $("#recipesList");
+  list.innerHTML = "";
+
+  if (recipes.length === 0) {
+    const empty = document.createElement("div");
+    empty.className = "muted";
+    empty.textContent = "No hay recetas cargadas.";
+    list.appendChild(empty);
+    return;
+  }
+
+  recipes.forEach((r) => {
+    const row = document.createElement("div");
+    row.className = "recipeRow";
+
+    const name = document.createElement("div");
+    name.className = "recipeRow__name";
+    name.textContent = r.name;
+
+    const meta = document.createElement("div");
+    meta.className = "recipeRow__meta";
+    meta.textContent = `${categoryLabel(r.cat)} • ${moneyFmt.format(r.price)}`;
+
+    const info = document.createElement("div");
+    info.appendChild(name);
+    info.appendChild(meta);
+
+    const actions = document.createElement("div");
+    actions.className = "recipeRow__actions";
+
+    const btnEdit = document.createElement("button");
+    btnEdit.type = "button";
+    btnEdit.className = "btn btn--ghost";
+    btnEdit.textContent = "Editar";
+    btnEdit.addEventListener("click", () => editRecipe(r.id));
+
+    const btnDelete = document.createElement("button");
+    btnDelete.type = "button";
+    btnDelete.className = "btn btn--ghost";
+    btnDelete.textContent = "Eliminar";
+    btnDelete.addEventListener("click", () => deleteRecipe(r.id));
+
+    actions.appendChild(btnEdit);
+    actions.appendChild(btnDelete);
+
+    row.appendChild(info);
+    row.appendChild(actions);
+    list.appendChild(row);
+  });
 }
 
 function renderOrder() {
@@ -378,6 +513,7 @@ function renderSaved() {
     empty.className = "muted";
     empty.textContent = "Todavía no hay pedidos guardados.";
     list.appendChild(empty);
+    renderKPIs();
     return;
   }
 
@@ -427,6 +563,18 @@ function renderSaved() {
     card.appendChild(actions);
     list.appendChild(card);
   }
+
+  renderKPIs();
+}
+
+function renderKPIs() {
+  const orders = loadOrders();
+  const paidTotal = orders
+    .filter((o) => o.status === "paid")
+    .reduce((acc, o) => acc + calcTotal(o.items || []), 0);
+  $("#kpiOrders").textContent = String(orders.length);
+  $("#kpiRecipes").textContent = String(recipes.length);
+  $("#kpiPaid").textContent = moneyFmt.format(paidTotal);
 }
 
 function initTabs() {
@@ -464,22 +612,8 @@ function initEvents() {
   $("#savedSearch").addEventListener("input", () => renderSaved());
 
   $("#btnClearAll").addEventListener("click", () => clearAllOrders());
-
-  $("#btnAddCustom").addEventListener("click", () => {
-    const name = safeText($("#customName").value);
-    const price = parsePrice($("#customPrice").value);
-    if (!name) {
-      showDialog("Falta info", "Ingresá el nombre del ítem.");
-      return;
-    }
-    if (price == null) {
-      showDialog("Falta info", "Ingresá un precio válido (ej. 3500 o 3500,50).");
-      return;
-    }
-    upsertItem({ name, price });
-    $("#customName").value = "";
-    $("#customPrice").value = "";
-  });
+  $("#btnRecipeSave").addEventListener("click", () => saveRecipeFromForm());
+  $("#btnRecipeCancel").addEventListener("click", () => resetRecipeForm());
 
   ["mesa", "cliente", "notas"].forEach((id) => {
     $(`#${id}`).addEventListener("input", () => {
@@ -491,9 +625,11 @@ function initEvents() {
 function boot() {
   initTabs();
   initEvents();
+  renderRecipes();
   renderMenu();
   newOrder();
   renderSaved();
+  renderKPIs();
 }
 
 boot();
